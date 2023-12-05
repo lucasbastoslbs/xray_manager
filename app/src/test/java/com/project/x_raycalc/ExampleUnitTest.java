@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.project.x_raycalc;
 
 import org.junit.Test;
 

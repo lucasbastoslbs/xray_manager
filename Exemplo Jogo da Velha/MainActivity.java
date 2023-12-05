@@ -1,4 +1,4 @@
-package com.example.jogodavelha;
+package com.project.jogodavelha;
 
 import androidx.appcompat.app.AppCompatActivity;
 
