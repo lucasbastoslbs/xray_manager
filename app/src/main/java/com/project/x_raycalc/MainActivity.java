@@ -164,11 +164,11 @@ public class MainActivity extends AppCompatActivity {
         double bsf = Double.parseDouble(eBsf.getText().toString());
         double mA = (double) sMa.getProgress();
         double kV = (double) sKv.getProgress();
-        double tempo = (double) sTempo.getProgress();
+        double tempo = (double) sTempo.getProgress()/1000;
         double rendimento = Double.parseDouble(eRendimento.getText().toString())/(mA*tempo);
 
 
-        esak = new ESAK(rendimento,espessura,mA,kV,bsf,rTorax.isChecked());
+        esak = new ESAK(rendimento,espessura,mA,tempo,bsf,rTorax.isChecked());
         tESAK.setText(String.format("%.3f",esak.calculaESAK()));
 
     }
