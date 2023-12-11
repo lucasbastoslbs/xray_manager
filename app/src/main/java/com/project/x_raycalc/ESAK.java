@@ -4,7 +4,10 @@ public class ESAK {
     private double rendimento, espessura, ma, s, bsf;
     private boolean isTorax;
 
+    private double esak;
+
     public ESAK(){
+        this.esak = 0;
     }
 
     public ESAK(double rendimento, double espessura, double ma, double s, double bsf, boolean isTorax){
@@ -14,6 +17,7 @@ public class ESAK {
         this.s = s;
         this.bsf = bsf;
         this.isTorax = isTorax;
+        this.esak = calculaESAK();
     }
 
     public double calculaESAK(){
@@ -25,6 +29,10 @@ public class ESAK {
             dfs = 100 - espessura;
         }
         return rendimento * (Math.pow((80/dfs),2)) * this.ma*this.s * this.bsf;
+    }
+
+    public String getData(){
+        return String.format("%.3f;%.3f;%.3f;%.3f;%.3f;%.3f",this.rendimento,this.espessura,this.ma,this.s,this.bsf,this.esak);
     }
 
     public double getRendimento() {
@@ -74,4 +82,8 @@ public class ESAK {
     public void setTorax(boolean torax) {
         isTorax = torax;
     }
+
+    public void setEsak(double esak){ this.esak = esak; }
+
+    public double getEsak(){ return this.esak; }
 }

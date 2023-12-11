@@ -2,11 +2,14 @@ package com.project.x_raycalc;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -14,7 +17,15 @@ import android.widget.TextView;
 
 import com.google.android.material.slider.Slider;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,11 +34,17 @@ public class MainActivity extends AppCompatActivity {
     RadioGroup rgRegiao;
     EditText eBsf, eEspessura, eRendimento;
     SeekBar sKv, sMa, sTempo;
-    TextView tESAK,tkv,tma,ttempo;
-
-    ESAK esak = new ESAK();
-
+    TextView tESAK,tkv,tma,ttempo,tFormula;
     Map<String,Double> valores = new HashMap<>();
+    List<String> calculos;
+    ListView lvLogs;
+
+    //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+    ArrayList<String> listItems=new ArrayList<String>();
+
+    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
+    ArrayAdapter<String> adapter;
+    FileManager fm = new FileManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +65,18 @@ public class MainActivity extends AppCompatActivity {
         sTempo = findViewById(R.id.tempo);
         tESAK = findViewById(R.id.esak);
         tkv = findViewById(R.id.tkv);
+        tkv.setText(String.format("Kv: %d",sKv.getProgress()));
         tma = findViewById(R.id.tma);
+        tma.setText(String.format("mA: %d",sMa.getProgress()));
         ttempo = findViewById(R.id.ttempo);
+        ttempo.setText(String.format("Tempo (ms): %d",sTempo.getProgress()));
+        tFormula = findViewById(R.id.formula);
+        lvLogs = findViewById(R.id.logs);
+        calculos = fm.readFromFile(this);
+        adapter=new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                calculos);
+        lvLogs.setAdapter(adapter);
         rgRegiao.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -166,10 +193,17 @@ public class MainActivity extends AppCompatActivity {
         double kV = (double) sKv.getProgress();
         double tempo = (double) sTempo.getProgress()/1000;
         double rendimento = Double.parseDouble(eRendimento.getText().toString())/(mA*tempo);
+        ESAK esak = new ESAK(rendimento,espessura,mA,tempo,bsf,rTorax.isChecked());
 
+        tESAK.setText(String.format("%.3f",esak.getEsak()));
+        //tFormula.setText(String.format("ESAK(%.20f) = %.2f * (80/%.2f)^2 * (%.2f*%.2f) * %.2f",esak.getEsak(),esak.getRendimento(), esak.getEspessura(), esak.getMa(),esak.getS(),esak.getBsf()));
+        tFormula.setText(esak.getData());
+        listItems.add(esak.getData());
+        adapter.notifyDataSetChanged();
+        calculos.add(esak.getData());
+    }
 
-        esak = new ESAK(rendimento,espessura,mA,tempo,bsf,rTorax.isChecked());
-        tESAK.setText(String.format("%.3f",esak.calculaESAK()));
-
+    public void salvalogs(View view){
+        fm.writeToFile(calculos,this);
     }
 }
