@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,9 @@ public class FileManager {
     public void salvaJSON(Map<String,Double> data){
 
     }
-    public List<String> readFromFile(Context context) {
+    public ArrayList<String> readFromFile(Context context) {
 
-        List<String> calculos = new ArrayList<String>();
+        ArrayList<String> calculos = new ArrayList<String>();
 
         try {
             InputStream inputStream = context.openFileInput("data.txt");
@@ -59,7 +60,7 @@ public class FileManager {
         return calculos;
     }
 
-    public void writeToFile(List<String> calculos,Context context) {
+    public void writeToFile(ArrayList<String> calculos, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("data.txt", Context.MODE_PRIVATE));
             for(String item : calculos)
